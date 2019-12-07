@@ -1,0 +1,179 @@
+<div id="page-wrapper">
+    <div class="container-fluid">
+        <!-- Page Heading -->
+        <h3>Task Manager</h3>
+        
+        <div class="margin">
+            <div class="row">
+                <div class="col-sm-3">
+                    <select class="mdb-select md-form select-css" [(ngModel)]="task.projectId">
+                        <option value="" disabled>Select Project Name</option>
+                        <option *ngFor="let project of allProjects" [value]="project.id">
+                            {{project.projectName}}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <select class="mdb-select md-form select-css" [(ngModel)]="task.projectManagerId">
+                        <option value="" disabled>Select PM</option>
+                        <ng-container *ngFor="let PM of allUsers">
+                            <option *ngIf="PM.userType=='2'"  [value]="PM.id" >{{PM.firstName}} {{PM.lastName}}</option>
+                        </ng-container>
+                    </select>
+                </div>
+               <div class="col-sm-3">
+                    <select class="mdb-select md-form select-css" [(ngModel)]="task.employeeId">
+                        <option value="" disabled>Select Employee</option>
+                        <ng-container *ngFor="let employee of allUsers">
+                            <option *ngIf="employee.userType=='3'"  [value]="employee.id" >{{employee.firstName}} {{employee.lastName}}</option>
+                        </ng-container>
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <select class="mdb-select md-form select-css" [(ngModel)]="task.projectType">
+                        <option value="" disabled>Select Project Type</option>
+                        <option *ngFor="let type of projectType" [value]="type.id">
+                            {{projectType[type.id-1].type}}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <select class="mdb-select md-form select-css" [(ngModel)]="task.taskStatus">
+                        <option value="" disabled>Select Task Status</option>
+                        <option *ngFor="let status of taskStatus" [value]="status.id">
+                            {{taskStatus[status.id-1].status}}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <ejs-datepicker id='datepicker' placeholder='Select Task Date' [(ngModel)]="task.taskDate" format ='yyyy-MM-dd'></ejs-datepicker>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary" (click)="checkTask()" >Search</button>
+                </div>
+            </div>
+                                                    
+            <div class="backdrop" [ngStyle]="{'display':display}"></div>
+            <!-- modal -->
+            <div class="modal" tabindex="-1" role="dialog"  [ngStyle]="{'display':display}">
+                <!-- modal-dialog -->
+                <div class="modal-dialog" role="document">
+                    <!-- modal-content -->
+                    <div class="modal-content">
+                        <!-- modal-header -->
+                        <div class="modal-header">
+                            <h3 class="modal-title" style="padding-top: 6px">Confirm Task Approval</h3>
+                            <button type="button" class="close" aria-label="Close" (click)="closeModalDialog()"><span aria-hidden="true">&times;</span></button>
+                        </div>
+        
+                        <!-- modal-body -->
+                        <div class="modal-body">
+                            <div style="padding-left: 15px; padding-bottom: 15px" >
+                                <h4>Do you want to approve this task ?</h4>
+                            </div>   
+                            <form class="form-inline">
+                                <div class="form-group">
+                                    <div class="col-sm-6" style="padding-top: 7px">
+                                        <label for="name">Enter Actual Tracked Hours</label>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="text" placeholder="Enter Actual Hours" id="name" [(ngModel)]="task.hours" name="name" #name="ngModel" required class="form-control">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- modal-footer -->
+                        <div class="modal-footer">
+                            <button class="btn btn-success" (click)="updateHours()">Approve and Confirm Hours</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--popup for Rejection-->
+            <div class="backdrop" [ngStyle]="{'display':anotherDisplay}"></div>
+            <!-- modal -->
+            <div class="modal" tabindex="-1" role="dialog"  [ngStyle]="{'display':anotherDisplay}">
+                <!-- modal-dialog -->
+                <div class="modal-dialog" role="document">
+                    <!-- modal-content -->
+                    <div class="modal-content">
+                        <!-- modal-header -->
+                        <div class="modal-header">
+                            <h3 class="modal-title" style="padding-top: 6px">Reason Of Rejection</h3>
+                            <button type="button" class="close" aria-label="Close" (click)="closeDialog()"><span aria-hidden="true">&times;</span></button>
+                        </div>
+        
+                        <!-- modal-body -->
+                        <div class="modal-body">     
+                            <div class="md-form">
+                                <label for="name">Why do you want to decline this task?</label>
+                                <textarea type="text" placeholder="Write Reason" id="name" [(ngModel)]="task.taskDetail" name="name" #name="ngModel" required class="md-textarea form-control" rows="5" mdbInput></textarea>
+                            </div>
+                        </div>
+                        <!-- modal-footer -->
+                        <div class="modal-footer">
+                            <button class="btn btn-success" (click)="updateTaskDetails()" >Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" >
+            <!-- column -->
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-block">
+                        <div class="table-responsive table-hover">
+                            <table class="table">
+                                <thead>
+                                    <th>Project Name</th>
+                                    <th>Employee</th>
+                                    <th>Project Type</th>
+                                    <th>Task Date</th>
+                                    <th>Hours</th>
+                                    <th>Deficit Hours</th>
+                                    <th>Task Details</th>
+                                    <th>Task Status</th>
+                                    <th>Action</th>
+                                </thead>
+                                <tbody *ngFor="let task of allTasks">
+                                    <tr>
+                                        <td>{{task.project.projectName}}</td>
+                                        <td>{{task.user.firstName}} {{task.user.lastName}}</td>
+                                        <td>{{projectType[task.project.projectType-1].type}}</td>
+                                        <td>{{task.taskDate}}</td>
+                                        <td *ngIf="task.employeeHours==task.pmHours; else notShow">
+                                            {{task.employeeHours}}
+                                        </td>
+                                        <ng-template #notShow>
+                                            <td>
+                                                {{task.employeeHours}}/{{task.pmHours}}
+                                            </td>
+                                        </ng-template>
+                                        <td ng-if="task.employeeHours!=task.pmHours">{{task.employeeHours-task.pmHours}}</td>
+                                        <td>{{task.taskDetail}}</td>
+                                        <td>{{taskStatus[task.taskStatus-1].status}}</td>
+                                        <td *ngIf="task.taskStatus!=3; else Show">
+                                            <a routerLink="/user" (click)="editUser(user.id)"><i class="fa fa-pencil" style="font-size:20px" aria-hidden="true"></i></a>
+                                        </td>
+                                        <ng-template #Show>
+                                            <td>
+                                                <a style="color:green; font-weight: bold; text-decoration: underline;" (click)="approveTask(task.id)">Approve</a>
+                                                <br>
+                                                <a style="color:red; font-weight: bold; text-decoration: underline;" (click)="declineTask(task.id)">Decline</a>
+                                            </td>
+                                        </ng-template>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</div>

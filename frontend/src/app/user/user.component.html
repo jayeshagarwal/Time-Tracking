@@ -1,0 +1,148 @@
+<div id="page-wrapper">
+        <div class="container-fluid">
+            <!-- Page Heading -->
+            <h3>User Management</h3>
+
+            <div class="wrap">
+                <div class="search">
+                   <input type="text" class="searchTerm" placeholder="Search by name" id="id" [(ngModel)]="user.firstName" name="id" #id="ngModel">
+                   <button type="submit" class="searchButton" (click)="checkUser()">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="margin">
+                <select class="mdb-select md-form select-css size" [(ngModel)]="user.status">
+                    <option value="" disabled>Select Status</option>
+                    <option *ngFor="let user of userStatus" [value]="user.id">
+                        {{user.status}}
+                    </option>
+                </select>           
+                <select class="mdb-select md-form select-css" [(ngModel)]="user.userType">
+                    <option value="" disabled>User Type</option>
+                    <option *ngFor="let user of userType" [value]="user.id">
+                        {{user.type}}
+                    </option>
+                </select>
+                <button type="button" class="btn btn-info" (click)="checkUser()" ><span class="glyphicon glyphicon-search"></span> Search</button>
+                <button (click)="addUser()" class="btn btn-success"><span class="glyphicon glyphicon-plus-sign"></span> Add</button>
+                <div class="backdrop" [ngStyle]="{'display':display}"></div>
+                <!-- modal -->
+                <div class="modal" tabindex="-1" role="dialog"  [ngStyle]="{'display':display}">
+                    <!-- modal-dialog -->
+                    <div class="modal-dialog" role="document">
+                        <!-- modal-content -->
+                        <div class="modal-content">
+    
+                            <!-- modal-header -->
+                            <div class="modal-header">
+                                <h3 class="modal-title" style="padding-top: 6px">Add User</h3>
+                                <button type="button" class="close" aria-label="Close" (click)="closeModalDialog()"><span aria-hidden="true">&times;</span></button>
+                            </div>
+    
+                            <!-- modal-body -->
+                            <div class="modal-body">
+                                <div>
+                                    <div>
+                                        <label for="firstName">First Name</label>
+                                        <input type="text" placeholder="Enter First Name" id="firstName" [(ngModel)]="newUser.firstName" name="firstName" #firstName="ngModel" required>
+                                        <div [hidden]="firstName.valid || firstName.pristine" class="alert alert-danger">
+                                            First Name is required
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label for="lastName">Last Name</label>
+                                        <input type="text" placeholder="Enter Last Name" id="lastName" [(ngModel)]="newUser.lastName" name="lastName" #lastName="ngModel" required>
+                                        <div [hidden]="lastName.valid || lastName.pristine" class="alert alert-danger">
+                                            Last Name is required
+                                        </div>
+                                    </div>
+                                </div>      
+                                <div>
+                                    <label>User Type </label>
+                                    <label *ngFor="let user of userType"><input type="radio" [(ngModel)]="newUser.userType" name="userType" [value]="user.id+''" required> {{user.type}} </label> 
+                                </div>
+                                <div>
+                                    <label for="email">Email ID</label>
+                                    <input type="email" class="form-control" id="email" placeholder="Enter Email Id" required email [(ngModel)]="newUser.email" name="email" #email="ngModel">
+                                    <div [hidden]="email.valid || email.pristine" class="alert alert-danger">
+                                        Email is required
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="mobileNumber">Mobile Number</label>
+                                    <input type="text" placeholder="Enter Mobile Number" id="mobileNumber" [(ngModel)]="newUser.mobileNumber" name="mobileNumber" #mobileNumber="ngModel" required>
+                                </div>
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" placeholder="Enter Password" required [(ngModel)]="newUser.password" name="password" #password="ngModel">
+                                <div [hidden]="password.valid || password.pristine" class="alert alert-danger">
+                                    Password is required
+                                </div>
+                                <label for="confirmPassword">Confirm Password</label>
+                                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" required [(ngModel)]="newUser.confirmPassword" name="confirmPassword" #confirmPassword="ngModel">
+                                <div [hidden]="password.valid || password.pristine" class="alert alert-danger">
+                                    Confirm Password is required
+                                </div>
+                                <div>
+                                    <label for="designation">Designation</label>
+                                    <input type="text" placeholder="Enter Designation" id="designation" [(ngModel)]="newUser.designation" name="designation" #designation="ngModel" required>
+                                    <div [hidden]="designation.valid || designation.pristine" class="alert alert-danger">
+                                        Designation is required
+                                    </div>
+                                </div>
+                                <div>
+                                    <label>Status </label>
+                                    <label *ngFor="let user of userStatus"><input type="radio" [(ngModel)]="newUser.status" name="status" [value]="user.id+''" required> {{user.status}} </label> 
+                                </div>
+                            </div>
+    
+                            <!-- modal-footer -->
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" (click)="closeModalDialog()" >Cancel</button>
+                                <button class="btn btn-info" (click)="existUser(newUser.id)">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                
+            <div class="row" >
+                <!-- column -->
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-block">
+                            <div class="table-responsive table-hover">
+                                <table class="table">
+                                    <thead>
+                                        <th>Name</th>
+                                        <th>Email ID</th>
+                                        <th>Designation</th>
+                                        <th>Created</th>
+                                        <th>Status</th>
+                                        <th>User Type</th>
+                                        <th>Action</th>
+                                    </thead>
+                                    <tbody *ngFor="let user of allUsers">
+                                        <tr>
+                                            <td>{{user.firstName}} {{user.lastName}}</td>
+                                            <td>{{user.email}}</td>
+                                            <td>{{user.designation}}</td>
+                                            <td>{{user.createdAt}}</td>
+                                            <td>{{user.status}}</td>
+                                            <td>{{userType[user.userType-1].type}}</td>
+                                            <td><a routerLink="/user" (click)="editUser(user.id)"><i class="fa fa-pencil" style="font-size:20px" aria-hidden="true"></i></a> 
+                                                <a routerLink="/user" (click)="deleteUser(user.id)"><i class="fa fa-trash" style="font-size:20px; margin-left:10px" aria-hidden="true"></i></a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </div>

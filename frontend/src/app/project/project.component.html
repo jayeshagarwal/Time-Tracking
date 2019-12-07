@@ -1,0 +1,245 @@
+<div id="page-wrapper">
+    <div class="container-fluid">
+        <!-- Page Heading -->
+        <h3>Project Management</h3>
+        <div class="wrap">
+                <div class="search">
+                    <input type="text" class="searchTerm" placeholder="Search via Project Name" id="id" [(ngModel)]="project.projectName" name="id" #id="ngModel">
+                    <button type="submit" class="searchButton" (click)="checkProject()">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+        </div>
+        <div class="margin">
+            <div class="row">
+                <div class="col-sm-2">
+                    <select class="mdb-select md-form select-css size" [(ngModel)]="project.status">
+                        <option value="" disabled>Select Status</option>
+                        <option *ngFor="let project of projectStatus" [value]="project.id">
+                            {{project.status}}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <select class="mdb-select md-form select-css" [(ngModel)]="project.projectManagerId">
+                        <option value="" disabled>Select PM</option>
+                        <option *ngFor="let PM of allPM" [value]="PM.id">
+                            {{PM.firstName}} {{PM.lastName}}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <ejs-datepicker id='firstdatepicker' placeholder='Select Start Date' [(ngModel)]="project.startDate" format ='yyyy-MM-dd'></ejs-datepicker>
+                </div>
+                <div class="col-sm-2">
+                    <ejs-datepicker id='seconddatepicker' placeholder='Select End Date' [(ngModel)]="project.endDate" format ='yyyy-MM-dd'></ejs-datepicker>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary" (click)="checkProject()" >Search</button>
+                </div>
+                <div>
+                    <button (click)="addProject()" class="btn btn-success"><span class="glyphicon glyphicon-plus-sign"></span> Add</button>
+                </div>
+            </div>
+                                                    
+            <div class="backdrop" [ngStyle]="{'display':display}"></div>
+            <!-- modal -->
+            <div class="modal" tabindex="-1" role="dialog"  [ngStyle]="{'display':display}">
+                <!-- modal-dialog -->
+                <div class="modal-dialog" role="document">
+                    <!-- modal-content -->
+                    <div class="modal-content">
+                        <!-- modal-header -->
+                        <div class="modal-header">
+                            <h3 class="modal-title" style="padding-top: 6px">Add Project</h3>
+                            <button type="button" class="close" aria-label="Close" (click)="closeModalDialog()"><span aria-hidden="true">&times;</span></button>
+                        </div>
+        
+                        <!-- modal-body -->
+                        <div class="modal-body">
+                            <div>
+                                <label for="name">Project Name</label>
+                                <input type="text" placeholder="Enter Project Name" id="name" [(ngModel)]="newProject.projectName" name="name" #name="ngModel" required>
+                                <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
+                                    Name is required
+                                </div>
+                            </div>      
+                            <div>
+                                <label for="projectManagerId">Project Manager</label>
+                                <select class="mdb-select md-form select-css size" [(ngModel)]="newProject.projectManagerId" required name="projectManagerId" #projectManagerId="ngModel">
+                                    <option value="" disabled selected>Select Project Manager</option>
+                                    <option *ngFor="let pm of allPM" [value]="pm.id">
+                                        {{pm.firstName}} {{pm.lastName}}
+                                    </option>
+                                </select>
+                                <div [hidden]="projectManagerId.valid || projectManagerId.pristine"
+                                class="alert alert-danger">
+                                    Name is required
+                                </div>
+                            </div>
+                            <div>
+                                <label for="status">Project Status</label>
+                                <select class="mdb-select md-form select-css size" [(ngModel)]="newProject.status" required>
+                                    <option value="" disabled>Select Status</option>
+                                    <option *ngFor="let project of projectStatus" [value]="project.id">
+                                        {{project.status}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="projectType">Project Type</label>
+                                <select class="mdb-select md-form select-css size" [(ngModel)]="newProject.projectType" required>
+                                    <option value="" disabled>Select Type</option>
+                                    <option *ngFor="let type of projectType" [value]="type.id">
+                                        {{type.type}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label>Start Date </label>
+                                    <ejs-datepicker id='firstdatepicker' placeholder='Select Start Date' [(ngModel)]="newProject.startDate" format ='yyyy-MM-dd'></ejs-datepicker>
+                                </div>
+                                <div clas="col-sm-6">
+                                    <label>End Date </label>
+                                    <ejs-datepicker id='seconddatepicker' placeholder='Select End Date' [(ngModel)]="newProject.endDate" format ='yyyy-MM-dd'></ejs-datepicker>
+                                </div>
+                            </div> 
+                        </div>
+                        <!-- modal-footer -->
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" (click)="closeModalDialog()" >Close</button>
+                            <button class="btn btn-info" (click)="existProject(newProject.id)">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--popup for Project Resource-->
+            <div class="backdrop" [ngStyle]="{'display':anotherDisplay}"></div>
+            <!-- modal -->
+            <div class="modal" tabindex="-1" role="dialog"  [ngStyle]="{'display':anotherDisplay}">
+                <!-- modal-dialog -->
+                <div class="modal-dialog" role="document">
+                    <!-- modal-content -->
+                    <div class="modal-content">
+                        <!-- modal-header -->
+                        <div class="modal-header">
+                            <h3 class="modal-title" style="padding-top: 6px">Manage Resource</h3>
+                            <button type="button" class="close" aria-label="Close" (click)="closeDialog()"><span aria-hidden="true">&times;</span></button>
+                        </div>
+        
+                        <!-- modal-body -->
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label>Select Resource </label>
+                                </div>
+                                <div class="col-sm-4">
+                                    <select class="mdb-select md-form select-css" [(ngModel)]="addEmployee.employeeId" required>
+                                        <option value="" disabled selected>Select Employee</option>
+                                        <option *ngFor="let user of allUsers" [value]="user.id">
+                                            {{user.firstName}} {{user.lastName}}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <button (click)="createResource()" class="btn btn-success"><span class="glyphicon glyphicon-plus-sign"></span> Add</button>
+                                </div>
+                            </div>
+                            <div class="table-responsive table-hover">
+                                <table class="table">
+                                    <thead>
+                                        <th>Project Team</th>
+                                        <th>Action</th>
+                                    </thead>
+                                    <tbody *ngFor="let employee of allEmployees">
+                                        <tr>
+                                            <td>{{employee.user.firstName}} {{employee.user.lastName}}</td>
+                                            <td> 
+                                                <a (click)="deleteUser(employee.user.id)"><i class="fa fa-trash" style="font-size:20px; margin-left:10px;color:blue;" aria-hidden="true"></i></a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>    
+                        </div>
+                        <!-- modal-footer -->
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" (click)="closeDialog()" >Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!--
+        <div class="row" >
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-block">
+                            <div class="table-responsive">
+                                <table class="table table-borderless">
+                                    <tbody *ngFor="let Project of allProjects">
+                                            <tr>
+                                                    <td>{{projectType[Project.projectType-1].type}}</td>
+                                                    <td>
+                                                        <button  class="btn btn-success"> Manage Resources
+                                                            <span class="fa-stack">
+                                                                <span class="fa fa-circle-o fa-stack-2x"></span>
+                                                                <strong class="fa-stack-1x"> {{Project.totalEmployee}} </strong>
+                                                            </span>
+                                                        </button>
+                                                    </td>
+                                                    <td>{{Project.startDate}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td> {{Project.projectName}}
+                                                        <a routerLink="/project" (click)="editProject(Project.id)"><i class="fa fa-pencil" style="font-size:20px; margin-left:50px" aria-hidden="true"></i></a> 
+                                                        <a routerLink="/side" (click)="deleteProject(Project.id)"><i class="fa fa-trash" style="font-size:20px; margin-left:10px" aria-hidden="true"></i></a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>{{Project.user.firstName}} {{Project.user.lastName}}</td>
+                                                    <td>{{projectStatus[Project.status-1].status}}</td>
+                                                    <td>{{Project.endDate}}</td>
+                                                </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+                    
+        <div class="row" style="padding-left: 15px;" id="main" *ngFor="let Project of allProjects">
+            <table id="content" class="col-sm-12 col-md-12 well">
+                <tr>
+                    <td>{{projectType[Project.projectType-1].type}}</td>
+                    <td>
+                        <button (click)="manageResource(Project.id)" class="btn btn-info"> Manage Resources
+                            <span class="fa-stack">
+                                <span class="fa fa-circle-o fa-stack-2x"></span>
+                                <strong class="fa-stack-1x"> {{Project.totalEmployee}}</strong>
+                            </span>
+                        </button>
+                    </td>
+                    <td>{{Project.startDate}}</td>
+                </tr>
+                <tr>
+                    <td> {{Project.projectName}}
+                        <a routerLink="/project" (click)="editProject(Project.id)"><i class="fa fa-pencil" style="font-size:20px; margin-left:50px" aria-hidden="true"></i></a> 
+                        <a routerLink="/side" (click)="deleteProject(Project.id)"><i class="fa fa-trash" style="font-size:20px; margin-left:10px" aria-hidden="true"></i></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>{{Project.user.firstName}} {{Project.user.lastName}}</td>
+                    <td>{{projectStatus[Project.status-1].status}}</td>
+                    <td>{{Project.endDate}}</td>
+                </tr>
+            </table>
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</div>

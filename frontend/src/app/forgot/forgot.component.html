@@ -1,0 +1,25 @@
+<div class="container" style="padding-top:60px;">
+    <div class="row">  
+        <div class="col-md-6 mx-auto">  
+            <div class="card mx-4">  
+                <div class="card-body p-4">
+                    <div [hidden]="submitted">
+                        <form #login="ngForm">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="email" placeholder="Enter Email" required email [(ngModel)]="user.email" name="email" #email="ngModel">
+                                <div [hidden]="email.valid || email.pristine" class="alert alert-danger">
+                                    Email is required
+                                </div>
+                            </div>
+                                  
+                            <div class="btn-group btn-group-sm">
+                                <button type="button" class="btn btn-dark" (click)="checkEmail()">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+</div>
